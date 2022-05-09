@@ -138,7 +138,7 @@ echo
 # Register the same schema for the replicated topic wikipedia.parsed.replica as was created for the original topic wikipedia.parsed
 # In this case the replicated topic will register with the same schema ID as the original topic
 echo -e "\nRegister subject wikipedia.parsed.replica-value in Schema Registry"
-SCHEMA=$(docker exec schemaregistry curl -s -X GET --cert /etc/kafka/secrets/schemaregistry.certificate.pem --key /etc/kafka/secrets/schemaregistry.key --tlsv1.2 --cacert /etc/kafka/secrets/snakeoil-ca-1.crt -u superUser:superUser https://schemaregistry:8085/subjects/wikipedia.parsed-value/versions/latest | jq .schema)
+SCHEMA=$(docker exec schemaregistry curl -s -X GET --cert /etc/kafka/secrets/schemaregistry.certificate.pem --key /etc/kafka/secrets/schemaregistry.key --tlsv1.2 --cacert /etc/kafka/secrets/snakeoil-ca-1.crt -u superUser:superUser https://schemaregistry:8085/subjects/wikipedia.parsed-value/versions/latest | .schema)
 docker-compose exec schemaregistry curl -X POST --cert /etc/kafka/secrets/schemaregistry.certificate.pem --key /etc/kafka/secrets/schemaregistry.key --tlsv1.2 --cacert /etc/kafka/secrets/snakeoil-ca-1.crt -H "Content-Type: application/vnd.schemaregistry.v1+json" --data "{\"schema\": $SCHEMA}" -u superUser:superUser https://schemaregistry:8085/subjects/wikipedia.parsed.replica-value/versions
 
 echo
@@ -194,7 +194,7 @@ curl -u mds:mds -X POST "https://localhost:8091/security/1.0/principals/User%3Am
 curl -u mds:mds -X POST "https://localhost:8091/security/1.0/rbac/principals" --silent \
   -H "accept: application/json"  -H "Content-Type: application/json" \
   -d "{\"clusters\":{\"kafka-cluster\":\"does_not_matter\"}}" \
-  --cacert ${DIR}/security/snakeoil-ca-1.crt --tlsv1.2 | jq '.[]'
+  --cacert ${DIR}/security/snakeoil-ca-1.crt --tlsv1.2 | '.[]'
 
 # Do poststart_checks
 poststart_checks
